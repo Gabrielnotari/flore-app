@@ -1,5 +1,6 @@
 package br.com.fiap.flore
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,17 +20,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.com.fiap.flore.R.drawable
 import br.com.fiap.flore.ui.theme.FloreTheme
 
 class MainActivity : ComponentActivity() {
@@ -49,13 +49,14 @@ fun InitialScreen(){
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Cyan),
+            .background(
+                color = MaterialTheme.colorScheme.background
+            )
     ){
         Column(
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
-                .background(color = Color.Green)
                 .align(Alignment.Center),
                 horizontalAlignment = Alignment.CenterHorizontally
 
@@ -70,39 +71,39 @@ fun InitialScreen(){
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    //.height(200.dp)
-                    .background(color = Color.Gray)
             ) {
                 Text(
-                    text = "Bem-vindo a Florê",
+                    text = "BEM VINDO A FLORÊ",
                     fontSize = 16.sp,
-                    color = Color(0xFF860000),
+                    color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Comece a Anunciar",
+                    text = "Comece Anunciar",
                     fontSize = 64.sp,
                     lineHeight = 65.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFFCB8080)
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .padding(top = 8.dp, bottom = 16.dp)
                 )
                 Row{
                     Button(
                         onClick = {},
                         colors = ButtonDefaults
                             .buttonColors(
-                                containerColor = Color(0xFF73E113)
+                                containerColor = MaterialTheme.colorScheme.primary
                             ),
                         border = BorderStroke(
                             width = 1.dp,
-                            color = Color(0xFFFFC107)
+                            color = MaterialTheme.colorScheme.tertiary
                         ),
                         modifier = Modifier
                             .size(width = 128.dp, height = 48.dp)
                     ) {
                         Text(
                             text = "Entrar",
-                            color = Color(0xFFFFFFFF),
+                            color = MaterialTheme.colorScheme.onPrimary,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -112,17 +113,17 @@ fun InitialScreen(){
                         onClick = {},
                         colors = ButtonDefaults
                             .buttonColors(
-                                containerColor = Color(0xFFFFC107)
+                                containerColor = MaterialTheme.colorScheme.tertiary
                             ),
                         border = BorderStroke(
-                            width = 1.dp, color = Color(0xFF52EA97)
+                            width = 1.dp, color = MaterialTheme.colorScheme.primary
                         ),
                         modifier = Modifier
                             .size(width = 128.dp, height = 48.dp)
                     ) {
                         Text(
                             text = "Registrar",
-                            color = Color(0xFFFFFFFF),
+                            color = MaterialTheme.colorScheme.onTertiary,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -134,8 +135,12 @@ fun InitialScreen(){
     }
 }
 
-@Preview
 @Composable
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
 fun InitialScreenPreview() {
     FloreTheme {
         InitialScreen()
