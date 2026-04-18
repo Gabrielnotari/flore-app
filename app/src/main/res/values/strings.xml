@@ -4,4 +4,8 @@
     <string name="bem_vindo_flore">BEM VINDO A FLORÊ</string>
     <string name="button_entrar">Entrar</string>
     <string name="button_registrar">Registrar-se</string>
+    <string name="registrar_se">Registrar-se</string>
+    <string name="crie_uma_nova_conta">Crie uma nova conta</string>
+    <string name="profile_image">Profile image</string>
+    <string name="camera_icon">Camera Icon</string>
 </resources>
