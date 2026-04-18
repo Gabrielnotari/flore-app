@@ -8,4 +8,11 @@
     <string name="crie_uma_nova_conta">Crie uma nova conta</string>
     <string name="profile_image">Profile image</string>
     <string name="camera_icon">Camera Icon</string>
+    <string name="digite_o_seu_nome">Digite o seu nome</string>
+    <string name="person_icon">Person Icon</string>
+    <string name="digite_seu_e_mail">Digite seu e-mail</string>
+    <string name="email_icon">Email Icon</string>
+    <string name="digite_sua_senha">Digite sua senha</string>
+    <string name="lock_icon">Lock Icon</string>
+    <string name="removeredeye">RemoveRedEye</string>
 </resources>
