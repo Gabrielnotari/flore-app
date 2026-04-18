@@ -10,11 +10,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -52,17 +54,23 @@ fun InitialScreen(){
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .fillMaxSize()
+                .fillMaxWidth()
                 .background(color = Color.Green)
+                .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+
         ){
             Image(
                 painter = painterResource(R.drawable.logo_flore),
                 contentDescription = "Logo Flore",
+                modifier = Modifier
+                    .size(190.dp)
             )
+            Spacer(modifier = Modifier.height(100.dp))
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    //.height(200.dp)
                     .background(color = Color.Gray)
             ) {
                 Text(
@@ -99,6 +107,7 @@ fun InitialScreen(){
                             fontWeight = FontWeight.Bold
                         )
                     }
+                    Spacer(modifier = Modifier.width(8.dp))
                     Button(
                         onClick = {},
                         colors = ButtonDefaults
