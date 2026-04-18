@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Flore</string>
+    <string name="app_title">Comece Anunciar</string>
+    <string name="bem_vindo_flore">BEM VINDO A FLORÊ</string>
+    <string name="button_entrar">Entrar</string>
+    <string name="button_registrar">Registrar-se</string>
 </resources>
