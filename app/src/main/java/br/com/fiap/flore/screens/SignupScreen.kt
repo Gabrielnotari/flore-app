@@ -1,10 +1,12 @@
 package br.com.fiap.flore.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,22 +24,48 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import br.com.fiap.flore.R
 import br.com.fiap.flore.ui.theme.FloreTheme
 
 @Composable
 fun SignupScreen(modifier: Modifier = Modifier){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                MaterialTheme.colorScheme.background
+            )
+    ){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .align(alignment = Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            TitleComponent()
+            Spacer(modifier = Modifier.height(48.dp))
+            UserImage()
+            SignupUserForm()
+        }
+    }
+}
 
-    
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+private fun SignupScreenPreview() {
+    FloreTheme() {
+        SignupScreen()
+    }
 }
 
 @Composable
@@ -48,6 +76,9 @@ fun TitleComponent(modifier: Modifier = Modifier) {
     ) {
         Text(
             text = stringResource(R.string.registrar_se),
+            fontWeight = FontWeight.Bold,
+            fontSize = 28.sp,
+            modifier = Modifier.height(48.dp),
             color = MaterialTheme.colorScheme.primary
         )
         Text(
@@ -75,7 +106,7 @@ fun UserImage(modifier: Modifier = Modifier) {
             painter = painterResource(R.drawable.profile),
             contentDescription = stringResource(R.string.profile_image),
             modifier = Modifier
-                .size(110.dp)
+                .size(100.dp)
                 .align(alignment = Alignment.Center)
         )
         Icon(
