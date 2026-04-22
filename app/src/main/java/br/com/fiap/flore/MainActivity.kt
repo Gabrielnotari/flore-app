@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import br.com.fiap.flore.screens.InitialScreen
+import br.com.fiap.flore.screens.LoginScreen
 import br.com.fiap.flore.screens.SignupScreen
 import br.com.fiap.flore.ui.theme.FloreTheme
 
@@ -15,7 +16,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             FloreTheme {
                 //InitialScreen()
-                SignupScreen()
+                //SignupScreen()
+                LoginScreen()
             }
         }
     }
