@@ -17,7 +17,8 @@ class MainActivity : ComponentActivity() {
             FloreTheme {
                 //InitialScreen()
                 //SignupScreen()
-                LoginScreen()
+                //LoginScreen()
+                //HomeScreen()
             }
         }
     }
