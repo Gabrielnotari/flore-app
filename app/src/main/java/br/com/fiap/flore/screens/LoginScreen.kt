@@ -36,11 +36,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import br.com.fiap.flore.R
+import br.com.fiap.flore.navigation.Destination
 import br.com.fiap.flore.ui.theme.FloreTheme
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun LoginScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +66,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(80.dp))
             LoginTitle()
             Spacer(modifier = Modifier.height(32.dp))
-            LoginForm()
+            LoginForm(navController)
         }
     }
 }
@@ -72,7 +75,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun LoginScreenPreview() {
     FloreTheme() {
-        LoginScreen()
+        LoginScreen(rememberNavController())
     }
 }
 
@@ -107,7 +110,7 @@ private fun LoginTitlePreview() {
 }
 
 @Composable
-fun LoginForm(modifier: Modifier = Modifier) {
+fun LoginForm(navController: NavController) {
     Column() {
         OutlinedTextField(
             value = "",
@@ -197,7 +200,9 @@ fun LoginForm(modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.primary
             )
             TextButton(
-                onClick = {}
+                onClick = {
+                    navController.navigate(Destination.SignupScreen.route)
+                }
             ) {
                 Text(
                     text = stringResource(R.string.cadastre_se),
@@ -212,6 +217,6 @@ fun LoginForm(modifier: Modifier = Modifier) {
 @Composable
 private fun LoginFormScreen() {
     FloreTheme() {
-        LoginForm()
+        LoginForm(rememberNavController())
     }
 }
