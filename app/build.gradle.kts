@@ -56,5 +56,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
+    // Mais ícones
     implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
+
+    // navigation compose
+    implementation (libs.androidx.navigation.compose)
 }
