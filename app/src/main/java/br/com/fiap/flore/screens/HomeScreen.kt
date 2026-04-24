@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -51,6 +54,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import br.com.fiap.flore.R
+import br.com.fiap.flore.components.CategoryItem
+import br.com.fiap.flore.repository.getAllCategories
 import br.com.fiap.flore.ui.theme.FloreTheme
 
 @Composable
@@ -188,17 +193,22 @@ private fun MyBottomAppBarPreview() {
 
 @Composable
 fun ContentScreen(modifier: Modifier = Modifier) {
+
+    //variavel para armazenar a lista de categorias
+
+    val categories = getAllCategories()
+
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 0.dp)
     ) {
         OutlinedTextField(
             value = "",
             onValueChange = {},
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults
                 .colors(
@@ -224,7 +234,7 @@ fun ContentScreen(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(16.dp))
         Card(
             modifier = Modifier
-                .padding(bottom = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 4.dp)
                 .fillMaxWidth()
                 .height(116.dp)
         ) {
@@ -237,12 +247,24 @@ fun ContentScreen(modifier: Modifier = Modifier) {
             )
         }
         Text(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 4.dp),
             fontWeight = FontWeight.Bold,
             text = stringResource(R.string.categorias),
             color = MaterialTheme.colorScheme.primary
         )
-        Spacer(modifier = Modifier.height(116.dp))
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(categories){ category ->
+                CategoryItem(category)
+            }
+        }
+
         Text(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             fontWeight = FontWeight.Bold,
             text = "Peças recém adicionadas",
             color = MaterialTheme.colorScheme.primary

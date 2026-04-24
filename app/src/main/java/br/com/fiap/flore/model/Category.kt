@@ -6,7 +6,7 @@ import br.com.fiap.flore.R
 
 data class Category(
     val id: Int = 0,
-    val name: String = "",
-    @DrawableRes val image: Int? = R.drawable.nophoto_img,
-    val background: Color = Color.Gray
+    val name: String = "Category Name",
+    @DrawableRes val image: Int? = R.drawable.img,
+    val background: Color = Color.White
 )
