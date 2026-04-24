@@ -1,11 +1,13 @@
 package br.com.fiap.flore.navigation
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import br.com.fiap.flore.screens.HomeScreen
 import br.com.fiap.flore.screens.InitialScreen
 import br.com.fiap.flore.screens.LoginScreen
@@ -23,6 +25,12 @@ fun NavigationRoutes() {
         }
         composable(
             route = Destination.HomeScreen.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "https://flore.fiap.com.br/email/{email}"
+                    action = Intent.ACTION_VIEW
+                }
+            ),
             arguments = listOf(navArgument("email"){
                 type = NavType.StringType
             })
