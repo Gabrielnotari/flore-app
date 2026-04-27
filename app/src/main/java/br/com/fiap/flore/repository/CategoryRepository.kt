@@ -29,5 +29,9 @@ fun getAllCategories() = listOf<Category>(
         image = R.drawable.saia_img,
         background = Color(0xFF9ACAE0)
     ),
-
 )
+
+fun getCategoryById(id: Int) = getAllCategories()
+    .find { category ->
+        category.id == id
+    }

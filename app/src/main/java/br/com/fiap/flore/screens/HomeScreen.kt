@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -55,7 +56,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import br.com.fiap.flore.R
 import br.com.fiap.flore.components.CategoryItem
+import br.com.fiap.flore.components.PecaItem
+import br.com.fiap.flore.navigation.Destination
 import br.com.fiap.flore.repository.getAllCategories
+import br.com.fiap.flore.repository.getAllPecas
 import br.com.fiap.flore.ui.theme.FloreTheme
 
 @Composable
@@ -80,7 +84,10 @@ fun HomeScreen(navController: NavController, email: String?) {
                 }
             }
         ){paddingValues ->
-            ContentScreen(modifier = Modifier.padding(paddingValues))
+            ContentScreen(
+                modifier = Modifier.padding(paddingValues),
+                navController = navController
+            )
         }
     }
 }
@@ -192,11 +199,13 @@ private fun MyBottomAppBarPreview() {
 }
 
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier) {
+fun ContentScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     //variavel para armazenar a lista de categorias
-
     val categories = getAllCategories()
+
+    //variavel para armazenar a lista de pecas
+    val pecas = getAllPecas()
 
     Column(
         modifier = modifier
@@ -258,7 +267,11 @@ fun ContentScreen(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(categories){ category ->
-                CategoryItem(category)
+                CategoryItem(category = category,
+                    onClick = {navController.navigate(
+                        route = Destination
+                            .CategoryPecaScreen
+                            .createRoute(categoryId = category.id))})
             }
         }
 
@@ -269,6 +282,14 @@ fun ContentScreen(modifier: Modifier = Modifier) {
             text = "Peças recém adicionadas",
             color = MaterialTheme.colorScheme.primary
         )
+        LazyColumn(
+            contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(pecas){ peca ->
+                PecaItem(peca)
+            }
+        }
     }
 }
 
@@ -276,6 +297,6 @@ fun ContentScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun ContentScreenPreview() {
     FloreTheme() {
-        ContentScreen()
+        ContentScreen(navController = rememberNavController())
     }
 }

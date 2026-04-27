@@ -24,4 +24,6 @@
     <string name="cadastre_se">Cadastre-se</string>
     <string name="procure_por_pecas">Procure por peças</string>
     <string name="categorias">Categorias</string>
+    <string name="search_by_pecas">search_by_pecas</string>
+    <string name="procure_pecas">Procure por peças</string>
 </resources>

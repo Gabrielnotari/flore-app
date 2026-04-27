@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import br.com.fiap.flore.screens.CategoryPecaScreen
 import br.com.fiap.flore.screens.HomeScreen
 import br.com.fiap.flore.screens.InitialScreen
 import br.com.fiap.flore.screens.LoginScreen
@@ -43,6 +44,19 @@ fun NavigationRoutes() {
         }
         composable(Destination.LoginScreen.route){
             LoginScreen(navController)
+        }
+        composable(
+            route = Destination.CategoryPecaScreen.route,
+            arguments = listOf(navArgument("categoryId") {
+                type = NavType.IntType
+            })
+        ) {
+            val categoryId = it.arguments?.getInt("categoryId") ?: 0
+
+            CategoryPecaScreen(
+                categoryId = categoryId,
+                navController = navController
+            )
         }
     }
 }
