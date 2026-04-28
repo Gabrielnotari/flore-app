@@ -1,8 +1,19 @@
 package br.com.fiap.flore.screens
 
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Patterns
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAPhoto
@@ -19,7 +31,6 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -35,7 +46,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,6 +66,43 @@ import br.com.fiap.flore.ui.theme.FloreTheme
 
 @Composable
 fun SignupScreen(navController: NavController){
+
+    val context = LocalContext.current
+
+    //variavel armazenara imagem padrao do usuario
+    val placeholderImage = BitmapFactory
+        .decodeResource(
+            Resources.getSystem(),
+            android.R.drawable.ic_menu_gallery
+        )
+
+    //armazena a imagem de perfil do usuario
+    var profileImage by remember {
+        mutableStateOf<Bitmap>(placeholderImage)
+    }
+
+    //lancador de atividade p selecionar imagem da galeria
+    val launchImage = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) {uri ->
+        if (Build.VERSION.SDK_INT < 28){
+            profileImage = MediaStore
+                .Images
+                .Media
+                .getBitmap(
+                    context.contentResolver,
+                    uri
+                )
+        } else {
+            if (uri != null){
+                val source = ImageDecoder.createSource(context.contentResolver, uri)
+                profileImage = ImageDecoder.decodeBitmap(source)
+            } else{
+                profileImage = placeholderImage
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -70,8 +119,8 @@ fun SignupScreen(navController: NavController){
         ) {
             TitleComponent()
             Spacer(modifier = Modifier.height(48.dp))
-            UserImage()
-            SignupUserForm(navController)
+            UserImage(profileImage, launchImage)
+            SignupUserForm(navController, profileImage)
         }
     }
 }
@@ -113,15 +162,16 @@ private fun TitleComponentPreview() {
 }
 
 @Composable
-fun UserImage(modifier: Modifier = Modifier) {
+fun UserImage(profileImage: Bitmap, launchImage: ManagedActivityResultLauncher<String, Uri?>) {
     Box(
         modifier = Modifier
             .size(120.dp)
     ){
         Image(
-            painter = painterResource(R.drawable.profile),
+            bitmap = profileImage.asImageBitmap(),
             contentDescription = stringResource(R.string.profile_image),
             modifier = Modifier
+                .clip(shape = CircleShape)
                 .size(100.dp)
                 .align(alignment = Alignment.Center)
         )
@@ -131,6 +181,11 @@ fun UserImage(modifier: Modifier = Modifier) {
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .align(alignment = Alignment.BottomEnd)
+                .clickable(
+                    onClick = {
+                        launchImage.launch("image/*")
+                    }
+                )
         )
     }
 }
@@ -139,12 +194,13 @@ fun UserImage(modifier: Modifier = Modifier) {
 @Composable
 private fun ProfileImagePreview() {
     FloreTheme() {
-        UserImage()
+        //UserImage(profileImage, launchImage)
     }
 }
 
 @Composable
-fun SignupUserForm( navController: NavController) {
+fun SignupUserForm(navController: NavController, profileImage: Bitmap) {
+
 
     var name by remember {
         mutableStateOf("")
@@ -390,6 +446,6 @@ fun SignupUserForm( navController: NavController) {
 @Composable
 private fun SignupUserFormPreview() {
     FloreTheme() {
-        SignupUserForm(rememberNavController())
+        //SignupUserForm(rememberNavController(), profileImage)
     }
 }
