@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +59,8 @@ import br.com.fiap.flore.R
 import br.com.fiap.flore.components.CategoryItem
 import br.com.fiap.flore.components.PecaItem
 import br.com.fiap.flore.navigation.Destination
+import br.com.fiap.flore.repository.SharedPrefrencesUserRepository
+import br.com.fiap.flore.repository.UserRepository
 import br.com.fiap.flore.repository.getAllCategories
 import br.com.fiap.flore.repository.getAllPecas
 import br.com.fiap.flore.ui.theme.FloreTheme
@@ -103,6 +106,12 @@ private fun HomeScreenPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyTopAppBar(email: String) {
+
+    val userRepository: UserRepository =
+        SharedPrefrencesUserRepository(LocalContext.current)
+
+    val user = userRepository.getUser()
+
     TopAppBar(
         modifier = Modifier
             .fillMaxWidth(),
@@ -116,7 +125,7 @@ fun MyTopAppBar(email: String) {
             ) {
                 Column() {
                     Text(
-                        text = "Olá, João!",
+                        text = "Olá, ${user.name}!",
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )

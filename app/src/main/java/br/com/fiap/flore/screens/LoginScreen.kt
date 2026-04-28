@@ -12,14 +12,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.RemoveRedEye
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -32,11 +37,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,6 +52,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import br.com.fiap.flore.R
 import br.com.fiap.flore.navigation.Destination
+import br.com.fiap.flore.repository.SharedPrefrencesUserRepository
+import br.com.fiap.flore.repository.UserRepository
 import br.com.fiap.flore.ui.theme.FloreTheme
 
 @Composable
@@ -124,6 +134,19 @@ fun LoginForm(navController: NavController) {
         mutableStateOf("")
     }
 
+    var showPassword by remember {
+        mutableStateOf(false)
+    }
+
+    var authenticateError by remember {
+        mutableStateOf(false)
+    }
+
+    // Criar uma instância da classe SharedPreferencesUserRepository
+    val userRepository: UserRepository =
+        SharedPrefrencesUserRepository(LocalContext.current)
+
+
     Column() {
         OutlinedTextField(
             value = email,
@@ -183,21 +206,42 @@ fun LoginForm(navController: NavController) {
                 )
             },
             trailingIcon = {
-                Icon(
-                    imageVector = Icons.Default.RemoveRedEye,
-                    contentDescription = "RemoveRedEye icon",
-                    tint = MaterialTheme.colorScheme.tertiary
-                )
+                val image = if (showPassword) {
+                    Icons.Default.Visibility
+                } else {
+                    Icons.Default.VisibilityOff
+                }
+                IconButton(
+                    onClick = {showPassword = !showPassword}
+                ) {
+                    Icon(
+                        imageVector = image,
+                        contentDescription = "",
+                        tint = MaterialTheme.colorScheme.tertiary
+                    )
+                }
             },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
+                keyboardType = KeyboardType.NumberPassword,
                 imeAction = ImeAction.Done
-            )
+            ),
+            visualTransformation = if (showPassword) {
+                VisualTransformation.None
+            }
+            else {
+                PasswordVisualTransformation()
+            }
         )
         Spacer(modifier = Modifier.height(32.dp))
         Button(
             onClick = {
-                navController.navigate(Destination.HomeScreen.createRoute(email))
+                val authenticate = userRepository.login(email, password)
+                if(authenticate){
+                    navController
+                        .navigate(Destination.HomeScreen.createRoute(email))
+                }else{
+                    authenticateError = true
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -208,6 +252,23 @@ fun LoginForm(navController: NavController) {
                 text = stringResource(R.string.entrar)
             )
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        if (authenticateError){
+            Row {
+                Icon(
+                    imageVector = Icons.Default.Error,
+                    contentDescription = "",
+                    tint = MaterialTheme.colorScheme.error
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Erro de autenticação!",
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
