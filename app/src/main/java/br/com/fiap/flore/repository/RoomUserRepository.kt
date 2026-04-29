@@ -28,4 +28,12 @@ class RoomUserRepository(context: Context): UserRepository {
         val user = floreDatabase.login(email, password)
         return user != null
     }
+
+    override fun update(user: User): Int {
+        return floreDatabase.update(user)
+    }
+
+    override fun delete(user: User): Int {
+        return floreDatabase.delete(user)
+    }
 }

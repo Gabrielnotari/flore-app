@@ -12,6 +12,7 @@ import br.com.fiap.flore.screens.CategoryPecaScreen
 import br.com.fiap.flore.screens.HomeScreen
 import br.com.fiap.flore.screens.InitialScreen
 import br.com.fiap.flore.screens.LoginScreen
+import br.com.fiap.flore.screens.ProfileScreen
 import br.com.fiap.flore.screens.SignupScreen
 
 @Composable
@@ -39,9 +40,23 @@ fun NavigationRoutes() {
             var email = backStackEntry.arguments?.getString("email")
             HomeScreen(navController, email)
         }
-        composable(Destination.SignupScreen.route){
+        composable(
+            route = Destination.SignupScreen.route)
+        {
             SignupScreen(navController)
         }
+
+        composable(
+            route = Destination.ProfileScreen.route,
+            arguments = listOf(
+                navArgument("email"){
+                    type = NavType.StringType
+                }))
+        { backStackEntry ->
+            var email = backStackEntry.arguments?.getString("email")
+            ProfileScreen(navController, email)
+        }
+
         composable(Destination.LoginScreen.route){
             LoginScreen(navController)
         }

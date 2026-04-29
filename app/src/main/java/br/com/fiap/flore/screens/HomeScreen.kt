@@ -1,7 +1,9 @@
 package br.com.fiap.flore.screens
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,9 +41,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -59,11 +66,12 @@ import br.com.fiap.flore.R
 import br.com.fiap.flore.components.CategoryItem
 import br.com.fiap.flore.components.PecaItem
 import br.com.fiap.flore.navigation.Destination
-import br.com.fiap.flore.repository.SharedPrefrencesUserRepository
+import br.com.fiap.flore.repository.RoomUserRepository
 import br.com.fiap.flore.repository.UserRepository
 import br.com.fiap.flore.repository.getAllCategories
 import br.com.fiap.flore.repository.getAllPecas
 import br.com.fiap.flore.ui.theme.FloreTheme
+import br.com.fiap.flore.utils.convertByteArrayToBitmap
 
 @Composable
 fun HomeScreen(navController: NavController, email: String?) {
@@ -72,7 +80,7 @@ fun HomeScreen(navController: NavController, email: String?) {
             .fillMaxSize()
     ) {
         Scaffold(
-            topBar = { MyTopAppBar(email!!) },
+            topBar = { MyTopAppBar(email!!, navController) },
             bottomBar = { MyBottomAppBar()},
             floatingActionButton = {
                 FloatingActionButton(
@@ -105,12 +113,18 @@ private fun HomeScreenPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopAppBar(email: String) {
+fun MyTopAppBar(email: String = "", navController: NavController) {
 
     val userRepository: UserRepository =
-        SharedPrefrencesUserRepository(LocalContext.current)
+        RoomUserRepository(LocalContext.current)
 
-    val user = userRepository.getUser()
+    val user = userRepository.getUserByEmail(email)
+
+    var profileBitmap by remember {
+        mutableStateOf<Bitmap>(
+            convertByteArrayToBitmap(user!!.userImage!!)
+        )
+    }
 
     TopAppBar(
         modifier = Modifier
@@ -125,7 +139,7 @@ fun MyTopAppBar(email: String) {
             ) {
                 Column() {
                     Text(
-                        text = "Olá, ${user.name}!",
+                        text = "Olá, ${user!!.name}!",
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
@@ -135,16 +149,25 @@ fun MyTopAppBar(email: String) {
                     )
                 }
                 Card(
-                    modifier = Modifier.size(48.dp),
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clickable(
+                            onClick = {
+                                navController.navigate(Destination
+                                    .ProfileScreen
+                                    .createRoute(email))
+                            }
+                        ),
                     shape = CircleShape,
                     colors = CardDefaults
                         .cardColors(containerColor = Color.Transparent),
                     border = BorderStroke(width = 1.dp, color = MaterialTheme.colorScheme.primary)
                 ) {
                     Image(
-                        painter = painterResource(R.drawable.profile),
+                        bitmap = profileBitmap.asImageBitmap(),
                         contentDescription = "Profile image",
-                        modifier = Modifier.size(50.dp)
+                        modifier = Modifier.size(50.dp),
+                        contentScale = ContentScale.Crop
                     )
                 }
             }
@@ -156,7 +179,7 @@ fun MyTopAppBar(email: String) {
 @Composable
 private fun MyTopAppBarPreview() {
     FloreTheme() {
-        MyTopAppBar("")
+        MyTopAppBar("", navController = rememberNavController())
     }
 }
 
@@ -169,8 +192,8 @@ data class BottomNavigationItem(
 fun MyBottomAppBar(modifier: Modifier = Modifier) {
     val items = listOf(
         BottomNavigationItem("Home", icon = Icons.Default.Home),
-        BottomNavigationItem("Favorites", icon = Icons.Default.Favorite),
-        BottomNavigationItem("Profile", icon = Icons.Default.Person),
+        BottomNavigationItem("Favoritos", icon = Icons.Default.Favorite),
+        BottomNavigationItem("Perfil", icon = Icons.Default.Person),
     )
 
     NavigationBar(

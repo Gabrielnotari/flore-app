@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -52,7 +51,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import br.com.fiap.flore.R
 import br.com.fiap.flore.navigation.Destination
-import br.com.fiap.flore.repository.SharedPrefrencesUserRepository
+import br.com.fiap.flore.repository.RoomUserRepository
 import br.com.fiap.flore.repository.UserRepository
 import br.com.fiap.flore.ui.theme.FloreTheme
 
@@ -144,7 +143,7 @@ fun LoginForm(navController: NavController) {
 
     // Criar uma instância da classe SharedPreferencesUserRepository
     val userRepository: UserRepository =
-        SharedPrefrencesUserRepository(LocalContext.current)
+        RoomUserRepository(LocalContext.current)
 
 
     Column() {

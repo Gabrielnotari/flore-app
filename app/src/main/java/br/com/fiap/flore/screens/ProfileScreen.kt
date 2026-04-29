@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.Mail
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -48,8 +49,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -62,12 +63,11 @@ import br.com.fiap.flore.R
 import br.com.fiap.flore.model.User
 import br.com.fiap.flore.navigation.Destination
 import br.com.fiap.flore.repository.RoomUserRepository
-import br.com.fiap.flore.repository.SharedPrefrencesUserRepository
 import br.com.fiap.flore.ui.theme.FloreTheme
 import br.com.fiap.flore.utils.convertBitmapToByteArray
 
 @Composable
-fun SignupScreen(navController: NavController){
+fun ProfileScreen(navController: NavController, email: String?) {
 
     val context = LocalContext.current
 
@@ -119,52 +119,44 @@ fun SignupScreen(navController: NavController){
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            TitleComponent()
+            ProfileTitleComponent()
             Spacer(modifier = Modifier.height(48.dp))
-            UserImage(profileImage, launchImage)
-            SignupUserForm(navController, profileImage)
+            ProfileUserImage(profileImage, launchImage)
+            ProfileUserForm(navController, profileImage, email)
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview
 @Composable
-private fun SignupScreenPreview() {
+private fun ProfileScreenPreview() {
     FloreTheme() {
-        SignupScreen(rememberNavController())
+        ProfileScreen(rememberNavController(), "")
     }
 }
 
 @Composable
-fun TitleComponent(modifier: Modifier = Modifier) {
+fun ProfileTitleComponent(modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(R.string.registrar_se),
+            text = "PERFIL",
             fontWeight = FontWeight.Bold,
             fontSize = 28.sp,
             modifier = Modifier.height(48.dp),
             color = MaterialTheme.colorScheme.primary
         )
         Text(
-            text = stringResource(R.string.crie_uma_nova_conta),
+            text = "Atualize seus dados",
             color = MaterialTheme.colorScheme.primary
         )
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun TitleComponentPreview() {
-    FloreTheme{
-        TitleComponent()
-    }
-}
-
-@Composable
-fun UserImage(profileImage: Bitmap, launchImage: ManagedActivityResultLauncher<String, Uri?>) {
+fun ProfileUserImage(profileImage: Bitmap, launchImage: ManagedActivityResultLauncher<String, Uri?>) {
     Box(
         modifier = Modifier
             .size(120.dp)
@@ -175,7 +167,8 @@ fun UserImage(profileImage: Bitmap, launchImage: ManagedActivityResultLauncher<S
             modifier = Modifier
                 .clip(shape = CircleShape)
                 .size(100.dp)
-                .align(alignment = Alignment.Center)
+                .align(alignment = Alignment.Center),
+            contentScale = ContentScale.Crop
         )
         Icon(
             imageVector = Icons.Default.AddAPhoto,
@@ -192,26 +185,21 @@ fun UserImage(profileImage: Bitmap, launchImage: ManagedActivityResultLauncher<S
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun ProfileImagePreview() {
-    FloreTheme() {
-        //UserImage(profileImage, launchImage)
-    }
-}
+fun ProfileUserForm(navController: NavController, profileImage: Bitmap, userEmail: String?) {
 
-@Composable
-fun SignupUserForm(navController: NavController, profileImage: Bitmap) {
-
+    //val userRepository = SharedPrefrencesUserRepository(LocalContext.current)
+    val userRepository = RoomUserRepository(LocalContext.current)
+    var user = userRepository.getUserByEmail(userEmail!!)
 
     var name by remember {
-        mutableStateOf("")
+        mutableStateOf(user!!.name)
     }
     var email by remember {
-        mutableStateOf("")
+        mutableStateOf(user!!.email)
     }
     var password by remember {
-        mutableStateOf("")
+        mutableStateOf(user!!.password)
     }
 
     //variaveis de estado p ver se os dados estao corretos
@@ -230,9 +218,9 @@ fun SignupUserForm(navController: NavController, profileImage: Bitmap) {
         return !isNameError && !isEmailError && !isPasswordError
     }
 
-
-    //val userRepository = SharedPrefrencesUserRepository(LocalContext.current)
-    val userRepository = RoomUserRepository(LocalContext.current)
+    var showDeleteDialog by remember {
+        mutableStateOf(false)
+    }
 
     Column(
         modifier = Modifier
@@ -380,8 +368,9 @@ fun SignupUserForm(navController: NavController, profileImage: Bitmap) {
         Button(
             onClick = {
                 if (validate()){
-                    userRepository.saveUser(
+                    userRepository.update(
                         User(
+                            id = user!!.id,
                             name = name,
                             email = email,
                             password = password,
@@ -399,10 +388,67 @@ fun SignupUserForm(navController: NavController, profileImage: Bitmap) {
             shape = RoundedCornerShape(8.dp)
         ) {
             Text(
-                text = stringResource(R.string.crie_uma_nova_conta)
+                text = "Atualizar",
+                fontSize = (18.sp)
+            )
+        }
+        // Botão Delete profile
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = {
+                showDeleteDialog = true
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.tertiary
+            )
+        ) {
+            Text(
+                text = "Deletar perfil",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onTertiary
             )
         }
     }
+
+    //caixa de dialogo p exclusao
+    if (showDeleteDialog != false) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = {
+                Text(
+                    text = "Usuário removido"
+                )
+            },
+            text = {
+                Text(
+                    text = "Tem certeza de que você deseja excluir sua conta?"
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDeleteDialog = false
+                    if (user != null){
+                        userRepository.delete(user)
+                        navController.navigate(Destination.InitialScreen.route)
+                    }
+                }) {
+                    Text(text = "OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDeleteDialog = false
+                }) {
+                    Text(text = "Cancelar")
+                }
+            }
+        )
+    }
+
     //caixa de dialogo de sucesso
     if (showDialogSuccess){
         AlertDialog(
@@ -411,7 +457,7 @@ fun SignupUserForm(navController: NavController, profileImage: Bitmap) {
                 Text(text = "Sucesso")
             },
             text = {
-                Text(text = "Conta criada com sucesso")
+                Text(text = "Conta atualizada com sucesso")
             },
             confirmButton = {
                 TextButton(
@@ -432,24 +478,16 @@ fun SignupUserForm(navController: NavController, profileImage: Bitmap) {
             },
             text = {
                 Text(text = "Por favor, preencha todos os campos corretamente")
-                   },
+            },
             confirmButton = {
                 TextButton(
                     onClick = {
                         showDialogError = false
                     })
                 {
-            Text(text = "OK")
-        }
-    }
+                    Text(text = "OK")
+                }
+            }
         )
-}
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SignupUserFormPreview() {
-    FloreTheme() {
-        //SignupUserForm(rememberNavController(), profileImage)
     }
 }
